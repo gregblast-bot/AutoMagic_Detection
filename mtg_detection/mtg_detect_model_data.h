@@ -13,9 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "model_settings.h"
+// This is a standard TensorFlow Lite model file that has been converted into a
+// C data array, so it can be easily compiled into a binary for devices that
+// don't have a file system. It was created using the command:
+// !xxd -i mtg_detector.tflite > mtg_model_data.cc
 
-const char* kCategoryLabels[kCategoryCount] = {
-    "notperson",
-    "person",
-};
+#ifndef TENSORFLOW_LITE_MICRO_EXAMPLES_MTG_DETECTION_MTG_DETECT_MODEL_DATA_H_
+#define TENSORFLOW_LITE_MICRO_EXAMPLES_MTG_DETECTION_MTG_DETECT_MODEL_DATA_H_
+
+extern const unsigned char g_mtg_detect_model_data[];
+extern const int g_mtg_detect_model_data_len;
+
+#endif  // TENSORFLOW_LITE_MICRO_EXAMPLES_MTG_DETECTION_MTG_DETECT_MODEL_DATA_H_

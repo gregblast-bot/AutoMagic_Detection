@@ -34,7 +34,7 @@ BLEStringCharacteristic metricsCharacteristic("19B10002-E8F2-537E-4F6C-D104768A1
 int8_t snapshot_buffer[kNumRows * kNumCols];
 
 // Flash the yellow (builtin) LED after each inference
-void RespondToDetection(float person_score, float no_person_score, int8_t* image_data) {
+void RespondToDetection(float mtg_score, float no_mtg_score, int8_t* image_data) {
   static bool ble_setup_done = false;
   static bool is_initialized = false;
 
@@ -73,17 +73,17 @@ void RespondToDetection(float person_score, float no_person_score, int8_t* image
   // Note: The RGB LEDs on the Arduino Nano 33 BLE
   // Sense are on when the pin is LOW, off when HIGH.
 
-  // Switch on the green LED when a person is detected,
-  // the blue when no person is detected
-  if (person_score > no_person_score && person_score > 0.55f) {
+  // Switch on the green LED when a mtg is detected,
+  // the blue when no mtg is detected
+  if (mtg_score > no_mtg_score && mtg_score > 0.55f) {
     digitalWrite(LEDG, LOW);
     digitalWrite(LEDB, HIGH);
 
-    // Only send the image if a person is actually detected to save power/bandwidth
+    // Only send the image if a mtg is actually detected to save power/bandwidth
     // Chunks the 96x96 image and sends it via BLE notifications
     // Small optimization: only send if score is high enough
     if (BLE.connected()) {
-      MicroPrintf("Person detected! Sending image...");
+      MicroPrintf("MTG detected! Sending image...");
       size_t totalSize = kNumRows * kNumCols;
       size_t chunkSize = 64; 
       // Copy data to our stable buffer immediately
@@ -112,15 +112,15 @@ void RespondToDetection(float person_score, float no_person_score, int8_t* image
   delay(100);
   digitalWrite(LED_BUILTIN, HIGH);
 
-  float person_score_frac, person_score_int;
-  float no_person_score_frac, no_person_score_int;
-  person_score_frac = std::modf(person_score * 100, &person_score_int);
-  no_person_score_frac = std::modf(no_person_score * 100, &no_person_score_int);
-  MicroPrintf("Person score: %d.%d%% No person score: %d.%d%%",
-              static_cast<int>(person_score_int),
-              static_cast<int>(person_score_frac * 100),
-              static_cast<int>(no_person_score_int),
-              static_cast<int>(no_person_score_frac * 100));
+  float mtg_score_frac, mtg_score_int;
+  float no_mtg_score_frac, no_mtg_score_int;
+  mtg_score_frac = std::modf(mtg_score * 100, &mtg_score_int);
+  no_mtg_score_frac = std::modf(no_mtg_score * 100, &no_mtg_score_int);
+  MicroPrintf("MTG score: %d.%d%% No mtg score: %d.%d%%",
+              static_cast<int>(mtg_score_int),
+              static_cast<int>(mtg_score_frac * 100),
+              static_cast<int>(no_mtg_score_int),
+              static_cast<int>(no_mtg_score_frac * 100));
 }
 
 #endif  // ARDUINO_EXCLUDE_CODE

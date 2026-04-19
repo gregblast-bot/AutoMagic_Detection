@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_IMAGE_PROVIDER_H_
-#define TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_IMAGE_PROVIDER_H_
+#ifndef TENSORFLOW_LITE_MICRO_EXAMPLES_MTG_DETECTION_IMAGE_PROVIDER_H_
+#define TENSORFLOW_LITE_MICRO_EXAMPLES_MTG_DETECTION_IMAGE_PROVIDER_H_
 
 #include "tensorflow/lite/c/common.h"
 
@@ -35,4 +35,4 @@ limitations under the License.
 // ensure there's a specialized implementation that accesses hardware APIs.
 TfLiteStatus GetImage(const TfLiteTensor* tensor);
 
-#endif  // TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_IMAGE_PROVIDER_H_
+#endif  // TENSORFLOW_LITE_MICRO_EXAMPLES_MTG_DETECTION_IMAGE_PROVIDER_H_

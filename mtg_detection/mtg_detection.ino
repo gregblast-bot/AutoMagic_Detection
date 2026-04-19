@@ -19,7 +19,7 @@ limitations under the License.
 #include "image_provider.h"
 #include "main_functions.h"
 #include "model_settings.h"
-#include "person_detect_model_data.h"
+#include "mtg_detect_model_data.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_log.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
@@ -40,7 +40,7 @@ TfLiteTensor* input = nullptr;
 // signed value.
 
 // An area of memory to use for input, output, and intermediate arrays.
-constexpr int kTensorArenaSize = 90 * 1024;
+constexpr int kTensorArenaSize = 75 * 1024;
 // Keep aligned to 16 bytes for CMSIS
 alignas(16) uint8_t tensor_arena[kTensorArenaSize];
 }  // namespace
@@ -51,7 +51,7 @@ void setup() {
 
   // Map the model into a usable data structure. This doesn't involve any
   // copying or parsing, it's a very lightweight operation.
-  model = tflite::GetModel(g_person_detect_model_data);
+  model = tflite::GetModel(g_mtg_detect_model_data);
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     MicroPrintf(
         "Model provided is schema version %d not equal "
@@ -115,11 +115,11 @@ void loop() {
   TfLiteTensor* output = interpreter->output(0);
 
   // Process the inference results.
-  int8_t person_score = output->data.uint8[kPersonIndex];
-  int8_t no_person_score = output->data.uint8[kNotAPersonIndex];
-  float person_score_f =
-      (person_score - output->params.zero_point) * output->params.scale;
-  float no_person_score_f =
-      (no_person_score - output->params.zero_point) * output->params.scale;
-  RespondToDetection(person_score_f, no_person_score_f, input->data.int8);
+  int8_t mtg_score = output->data.uint8[kMTGIndex];
+  int8_t no_mtg_score = output->data.uint8[kNotAMTGIndex];
+  float mtg_score_f =
+      (mtg_score - output->params.zero_point) * output->params.scale;
+  float no_mtg_score_f =
+      (no_mtg_score - output->params.zero_point) * output->params.scale;
+  RespondToDetection(mtg_score_f, no_mtg_score_f, input->data.int8);
 }
