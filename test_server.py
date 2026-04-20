@@ -106,7 +106,7 @@ async def main():
 
     print(f"Found {target_device.name} at {target_device.address}. Connecting...")
 
-    async with BleakClient(target_device, timeout=30.0) as client:
+    async with BleakClient(target_device, timeout=30.0, mtu_size=512) as client:
         print(f"Connected: {client.is_connected}")
 
         read_characteristic = None

@@ -31,7 +31,7 @@ BLEService imageService("19B10000-E8F2-537E-4F6C-D104768A1214");
 BLECharacteristic imageCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLENotify, 64); // Characteristic UUID for read image ops
 BLEStringCharacteristic metricsCharacteristic("19B10002-E8F2-537E-4F6C-D104768A1214", BLERead | BLENotify, 50); // Define a characteristic for sending metrics
 // Allocate a separate buffer so the Tensor Arena can't overwrite it
-int8_t snapshot_buffer[kNumRows * kNumCols];
+//int8_t snapshot_buffer[kNumRows * kNumCols];
 
 // Flash the yellow (builtin) LED after each inference
 void RespondToDetection(float mtg_score, float no_mtg_score, int8_t* image_data) {
@@ -39,7 +39,9 @@ void RespondToDetection(float mtg_score, float no_mtg_score, int8_t* image_data)
   static bool is_initialized = false;
 
   if (ble_setup_done){
+    BLE.setAdvertisingInterval(32);
     BLE.advertise();
+    delay(5);
   }
 
   if (!ble_setup_done) {
@@ -75,7 +77,7 @@ void RespondToDetection(float mtg_score, float no_mtg_score, int8_t* image_data)
 
   // Switch on the green LED when a mtg is detected,
   // the blue when no mtg is detected
-  if (mtg_score > no_mtg_score && mtg_score > 0.55f) {
+  if (mtg_score > no_mtg_score && mtg_score > 0.4f) {
     digitalWrite(LEDG, LOW);
     digitalWrite(LEDB, HIGH);
 
@@ -87,7 +89,7 @@ void RespondToDetection(float mtg_score, float no_mtg_score, int8_t* image_data)
       size_t totalSize = kNumRows * kNumCols;
       size_t chunkSize = 64; 
       // Copy data to our stable buffer immediately
-      memcpy(snapshot_buffer, image_data, kNumRows * kNumCols);
+      //memcpy(snapshot_buffer, image_data, kNumRows * kNumCols);
       for (size_t i = 0; i < totalSize; i += chunkSize) {
         // Check if we are still connected before sending every chunk
         if (!BLE.connected()) {
@@ -95,7 +97,7 @@ void RespondToDetection(float mtg_score, float no_mtg_score, int8_t* image_data)
             break;
         }
         size_t currentSize = min(chunkSize, totalSize - i);
-        imageCharacteristic.writeValue((uint8_t*)&snapshot_buffer[i], currentSize);
+        imageCharacteristic.writeValue((uint8_t*)&image_data[i], currentSize);
         // This keeps the BLE radio alive while we are in the loop
         BLE.poll(); 
         delay(20);

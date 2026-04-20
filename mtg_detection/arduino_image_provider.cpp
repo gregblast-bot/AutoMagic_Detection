@@ -5,7 +5,7 @@
 
 // We capture in QQVGA (160x120) because it's the smallest the hardware supports
 namespace {
-  byte frame[160 * 120 * 2]; // Buffer for the raw camera data
+  byte frame[160 * 120]; // Buffer for the raw camera data
 }
 
 TfLiteStatus GetImage(const TfLiteTensor* tensor) {
@@ -14,7 +14,7 @@ TfLiteStatus GetImage(const TfLiteTensor* tensor) {
   if (!is_initialized) {
     // Start camera with QQVGA resolution and YUV422 format
     // YUV422 is best because the "Y" channel is already grayscale
-    if (!Camera.begin(QQVGA, YUV422, 1)) {
+    if (!Camera.begin(QQVGA, GRAYSCALE, 1)) {
       MicroPrintf("Camera failed to initialize!");
       return kTfLiteError;
     }
@@ -36,12 +36,12 @@ TfLiteStatus GetImage(const TfLiteTensor* tensor) {
       int src_x = start_x + x;
       int src_y = start_y + y;
       
-      // YUV422 format: [Y0, U0, Y1, V0]. 
-      // Brightness (Y) is every even byte.
-      int src_index = (src_y * 160 + src_x) * 2;
+      // In GRAYSCALE mode, 1 pixel = 1 byte.
+      int src_index = (src_y * 160 + src_x); 
       uint8_t y_value = frame[src_index];
 
       // Convert 0..255 (unsigned) to -128..127 (signed int8)
+      // This matches the quantization expected by the model.
       image_data[y * kNumCols + x] = (int8_t)(y_value - 128);
     }
   }

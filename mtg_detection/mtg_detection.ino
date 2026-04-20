@@ -40,7 +40,7 @@ TfLiteTensor* input = nullptr;
 // signed value.
 
 // An area of memory to use for input, output, and intermediate arrays.
-constexpr int kTensorArenaSize = 75 * 1024;
+constexpr int kTensorArenaSize = 60 * 1024;
 // Keep aligned to 16 bytes for CMSIS
 alignas(16) uint8_t tensor_arena[kTensorArenaSize];
 }  // namespace
@@ -68,12 +68,18 @@ void setup() {
   //
   // tflite::AllOpsResolver resolver;
   // NOLINTNEXTLINE(runtime-global-variables)
-  static tflite::MicroMutableOpResolver<5> micro_op_resolver;
-  micro_op_resolver.AddAveragePool2D();
+  static tflite::MicroMutableOpResolver<15> micro_op_resolver;
+  micro_op_resolver.AddMaxPool2D();
   micro_op_resolver.AddConv2D();
   micro_op_resolver.AddDepthwiseConv2D();
   micro_op_resolver.AddReshape();
   micro_op_resolver.AddSoftmax();
+  micro_op_resolver.AddFullyConnected();
+  micro_op_resolver.AddQuantize();   
+  micro_op_resolver.AddDequantize();
+  micro_op_resolver.AddAdd();
+  micro_op_resolver.AddMul();
+  micro_op_resolver.AddPad();
 
   // Build an interpreter to run the model with.
   // NOLINTNEXTLINE(runtime-global-variables)
