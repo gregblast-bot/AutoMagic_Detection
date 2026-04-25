@@ -28,8 +28,8 @@ constexpr int kNumChannels = 1;
 constexpr int kMaxImageSize = kNumCols * kNumRows * kNumChannels;
 
 constexpr int kCategoryCount = 2;
-constexpr int kMTGIndex = 1;
-constexpr int kNotAMTGIndex = 0;
+constexpr int kMTGIndex = 0;
+constexpr int kNotAMTGIndex = 1;
 extern const char* kCategoryLabels[kCategoryCount];
 
 #endif  // TENSORFLOW_LITE_MICRO_EXAMPLES_MTG_DETECTION_MODEL_SETTINGS_H_
